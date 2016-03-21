@@ -12,34 +12,26 @@
   };
 
   var Tabs = function(el) {
-    this.$tabs = $(el)
+    this.$tabs = $(el);
 
     this.toggle = this.toggle.bind(this)
 
     this.$tabs.on('click', 'a', function(e){
       e.preventDefault();
       this.toggle(e.target);
-    }.bind(this))
+    }.bind(this));
 
-    this.$tabs.find('a').each(function(){
-      targetForLink(this).hide()
-    })
-
-    this.toggle(this.$tabs.find('a').first())
+    this.toggle(this.$tabs.find('a').first());
   }
 
   Tabs.prototype.toggle = function(target) {
     var $target = $(target);
 
-    if($target.is(this.$active)) {
-      return
-    }
+    if(this.$active) this.$active.attr('data-active', null)
 
-
-    if(this.$active) {
-      this.$active.attr('data-active', null)
-      targetForLink(this.$active).hide();
-    }
+    this.$tabs.find('a').each(function(){
+      targetForLink(this).hide();
+    })
 
     targetForLink($target).show();
     this.$active = $target.attr('data-active', 'data-active')
@@ -47,13 +39,9 @@
 
   $.fn.tabs = function(){
     return this.each(function(){
-      new Tabs(this)
-    })
-  }
-
-  $(function() {
-    $('.tabs').tabs();
-  })
+      new Tabs(this);
+    });
+  };
 })(jQuery);
 
 (function($) {
@@ -62,6 +50,8 @@
     var element  = $(el);
     var api      = element.data('api');
     var sortable = element.data('sortable');
+
+    element.find('.tabs').tabs();
 
     if(sortable === false) return false;
 
