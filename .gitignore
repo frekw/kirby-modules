@@ -17,3 +17,4 @@ wp-content/plugins/hello.php
 /license.txt
 
 .DS_Store
+.tern-port
