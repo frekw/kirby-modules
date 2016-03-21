@@ -1,0 +1,102 @@
+.modules {
+}
+
+.modules-readonly {
+}
+
+.modules-entries {
+  padding:1.5em 1em;
+  background:#f7f7f7;
+  border: 2px solid #ddd;
+}
+
+.modules-empty {
+  padding:4em 0;
+  text-align: center;
+}
+
+.modules-empty-add-button {
+  margin-top:1em;
+}
+
+.modules-actions {
+  text-align:center;
+}
+
+.modules-add-button {
+  margin-bottom:-3em;
+  background:#fff;
+  border-color:#ddd;
+}
+
+.modules-add-button:hover {
+  border-color:#000;
+}
+
+.modules-entry-content {
+  padding:1em;
+  border:1px solid #ddd;
+  background:#fff;
+}
+
+.modules-entry {
+  position:relative;
+  margin-bottom:2em;
+}
+
+.modules-type {
+  font-size:0.85em;
+  text-transform:uppercase;
+  margin-bottom:1em;
+}
+
+.modules-entry-wrappper:last-of-type {
+  margin-bottom:0;
+}
+
+.modules-entry-delete {
+  position:absolute;
+  right:0.25em;
+  top:0.65em;
+  padding: .6em 1em;
+  font-size:0.8em;
+  text-transform: uppercase;
+
+  opacity:0;
+  transition:all 175ms ease-in;
+}
+
+.modules-entry:hover .modules-entry-delete {
+  opacity: 1;
+}
+
+.tabs {
+  list-style:none;
+  padding:0;
+  overflow:hidden;
+  border-left:1px solid #ddd;
+  position:relative;
+  top:1px;
+}
+
+.tabs li {
+  float:left;
+}
+
+.tabs a {
+  border:1px solid #ddd;
+  border-left:0;
+  float:left;
+  padding:0.75em;
+  background:#f7f7f7;
+}
+
+.tabs a:hover {
+  background:#fbfbfb;
+}
+
+.tabs [data-active] {
+  border-bottom-color:#fff;
+  background:#fff;
+  font-weight:bold;
+}
