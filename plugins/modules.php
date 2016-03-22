@@ -2,8 +2,30 @@
 
 kirby()->roots->modules = kirby()->roots->site() . DS . 'modules';
 
+class ModulesAssetsController {
+  public static function js(){
+    return new Response(Modules::js(), 'text/javascript');
+  }
+
+  public static function css(){
+    return new Response(Modules::css(), 'text/css');
+  }
+}
 
 class Modules extends Brick {
+  public static $routes = array(
+    array(
+      'pattern' => 'modules.js',
+      'action' => 'ModulesAssetsController::js',
+      'method' => 'GET'
+    ),
+    array(
+      'pattern' => 'modules.css',
+      'action' => 'ModulesAssetsController::css',
+      'method' => 'GET'
+    )
+  );
+
   public $modules = array();
   public $tag = 'div';
 
@@ -24,7 +46,7 @@ class Modules extends Brick {
   }
 
   static public function js() {
-    return glob(implode(DS, array(kirby()->roots->modules,
+    return self::respond(implode(DS, array(kirby()->roots->modules,
                                   '*',
                                   'assets',
                                   'js',
@@ -32,11 +54,23 @@ class Modules extends Brick {
   }
 
   static public function css() {
-    return glob(implode(DS, array(kirby()->roots->modules,
-                                  '*',
-                                  'assets',
-                                  'css',
-                                  '**.css')));
+    return self::respond(implode(DS, array(kirby()->roots->modules,
+                                   '*',
+                                   'assets',
+                                   'css',
+                                   '**.css')));
+
+  }
+
+  static function respond($glob) {
+    $output = array();
+    $paths = glob($glob);
+
+    foreach($paths as $file){
+      $output[] = f::read($file);
+    }
+
+    return implode(PHP_EOL . PHP_EOL, $output);
   }
 }
 
@@ -85,3 +119,25 @@ field::$methods['modules'] = function($field) {
   $field->value = (new Modules($field))->render();
   return $field;
 };
+
+
+ob_start();
+
+$router = new Router(Modules::$routes);
+
+$route = $router->run(kirby()->path());
+
+if(is_null($route)) return;
+
+
+$response = call($route->action(), $route->arguments());
+
+if(is_a($response, 'Response')) {
+  echo $response;
+} else {
+  echo new Response($response);
+}
+
+ob_end_flush();
+
+exit;
