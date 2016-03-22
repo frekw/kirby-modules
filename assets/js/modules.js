@@ -5,7 +5,7 @@
 
   var targetForHref = function(href){
     return $(idFromHref(href));
-  }
+  };
 
   var targetForLink = function(el) {
     return targetForHref($(el).attr('href'));
@@ -14,7 +14,7 @@
   var Tabs = function(el) {
     this.$tabs = $(el);
 
-    this.toggle = this.toggle.bind(this)
+    this.toggle = this.toggle.bind(this);
 
     this.$tabs.on('click', 'a', function(e){
       e.preventDefault();
@@ -27,15 +27,15 @@
   Tabs.prototype.toggle = function(target) {
     var $target = $(target);
 
-    if(this.$active) this.$active.attr('data-active', null)
+    if(this.$active) this.$active.attr('data-active', null);
 
     this.$tabs.find('a').each(function(){
       targetForLink(this).hide();
     })
 
     targetForLink($target).show();
-    this.$active = $target.attr('data-active', 'data-active')
-  }
+    this.$active = $target.attr('data-active', 'data-active');
+  };
 
   $.fn.tabs = function(){
     return this.each(function(){
@@ -74,7 +74,7 @@
           // app.content.reload();
         });
       }
-    })
+    });
   };
 
   $.fn.modules = function() {
