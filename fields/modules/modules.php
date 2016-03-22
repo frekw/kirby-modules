@@ -97,9 +97,3 @@ class ModulesField extends BaseField {
      return purl($this->model(), 'field/' . $this->name() . '/modules/' . $action);
   }
 }
-
-
-field::$methods['modules'] = function($field) {
-    $field->value = 'bananer';
-    return $field;
-};
