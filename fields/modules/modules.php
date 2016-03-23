@@ -63,18 +63,34 @@ class ModulesField extends BaseField {
   }
 
   public function entries() {
-    return $this->structure()->data();
+      // TODO: We need to get this as a path (field1, index, field2) instead of simply $this->name... HOW?
+      // $data = (array)yaml::decode($this->model->{$this->name}());
+      $data = (array)yaml::decode($this->value());
+
+      foreach($data as $k => $v){
+          $v['id'] = str::random(32);
+          $data[$k] = $v;
+      }
+
+      $coll = new Collection($data);
+      $coll = $coll->map(function($item) {
+        return new Obj($item);
+      });
+
+      return $coll;
   }
 
   public function result() {
-    $result = parent::result();
-    if(isset($result)) {
-      foreach($result as $id => $data) {
-        $this->structure()->update($id, $data);
+    $result = array();
+
+    foreach(parent::result() as $k => $v){
+      if(isset($v['id'])){
+        unset($v['id']);
       }
+      $result[] = $v;
     }
 
-    return $this->structure()->toYaml();
+    return trim(yaml::encode($result));
   }
 
   public function label() {
