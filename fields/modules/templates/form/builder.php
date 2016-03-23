@@ -33,8 +33,12 @@ class FormBuilder {
     }
   }
 
-  public function prefix() {
-    return $this->parent->name . '[' . $this->entry->id . ']';
+  public function prefix($subtree = '') {
+    if($subtree === '') {
+      return $this->parent->name . '[' . $this->entry->id . ']';
+    }
+
+    return $this->parent->name . '[' . $this->entry->id . '][' . $subtree . ']';
   }
 
   public function fields() {
@@ -51,7 +55,7 @@ class FormBuilder {
 
   public function options() {
     $blueprint = $this->blueprint();
-    return new FormFields($this->parent->page, $blueprint['options'], $this->values(), $this->prefix());
+    return new FormFields($this->parent->page, $blueprint['options'], $this->values(), $this->prefix('options'));
   }
 
   public function values($fields = array()) {

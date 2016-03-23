@@ -26,6 +26,8 @@ class FormFields extends Brick {
       $field['default'] = a::get($field, 'default', null);
       $field['value']   = a::get($this->values(), $name, $field['default']);
       $field['page'] = $this->page;
+      $field['model'] = $this->page;
+
       $this->fields->append($prefixedName, static::field($field['type'], $field));
     }
     return $this;
@@ -46,6 +48,7 @@ class FormFields extends Brick {
     foreach($options as $key => $value) {
       $field->$key = $value;
     }
+
     return $field;
   }
 

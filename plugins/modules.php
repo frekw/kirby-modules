@@ -80,8 +80,25 @@ class Module {
 
   public function __construct($type, $data, $page){
     $this->type = $type;
-    $this->data = $data;
+    $this->data = new stdClass();
+
+    foreach($data as $k => $v){
+      if($k === 'options') {
+        $this->options($page, $v);
+      } else {
+        $this->data->$k = new Field($page, $k, $v);
+      }
+    }
+
     $this->page = $page;
+  }
+
+  public function options($page, $options) {
+    $this->data->options = new stdClass();
+
+    foreach($options as $k => $v) {
+      $this->data->options->$k = new Field($page, $k, $v);
+    }
   }
 
   public function args() {
@@ -111,7 +128,7 @@ class Module {
   }
 
   public function render(){
-    return tpl::load($this->template(), array('foo' => 'bar'));
+    return tpl::load($this->template(), $this->args());
   }
 }
 
