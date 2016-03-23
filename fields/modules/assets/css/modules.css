@@ -95,6 +95,7 @@
   background:#fbfbfb;
 }
 
+.tabs a:hover[data-active],
 .tabs [data-active] {
   border-bottom-color:#fff;
   background:#fff;
