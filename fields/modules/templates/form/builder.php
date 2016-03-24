@@ -6,6 +6,7 @@ class FormBuilder {
   public $type = null;
   public $cache = array();
   public $parent = null;
+  public $path = null;
 
   function __construct($entry, $parent) {
     $this->entry = $entry;
@@ -50,12 +51,12 @@ class FormBuilder {
       'name' => 'type'
     );
 
-    return new FormFields($this->parent->page, $fields, $this->values($fields), $this->prefix());
+    return new FormFields($this->parent, $fields, $this->values($fields), $this->prefix());
   }
 
   public function options() {
     $blueprint = $this->blueprint();
-    return new FormFields($this->parent->page, $blueprint['options'], $this->values(), $this->prefix('options'));
+    return new FormFields($this->parent, $blueprint['options'], $this->values(), $this->prefix('options'));
   }
 
   public function values($fields = array()) {

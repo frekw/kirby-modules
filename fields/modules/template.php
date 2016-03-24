@@ -21,7 +21,7 @@
     <?php require implode(DS, array(__DIR__, 'templates', 'items.php')); ?>
 
     <div class="modules-actions">
-      <a data-modal class="btn btn-rounded modules-add-button" href="<?php echo purl($field->model, 'field/' . $field->name . '/modules/add'); ?>">+ Add Module</a>
+      <a data-modal class="btn btn-rounded modules-add-button" href="<?php echo $field->url('add'); ?>">+ Add Module</a>
     </div>
     <?php endif ?>
   </div>

@@ -1,5 +1,5 @@
 <?php
-$form = require_once implode(DS, array(__DIR__, 'form.php'));
+$form = require implode(DS, array(__DIR__, 'form.php'));
 
 foreach($field->entries() as $i => $entry): ?>
 

@@ -1,6 +1,7 @@
 <?php
 
 use Kirby\Panel\Models\Page\Blueprint;
+require_once __DIR__ . DS . 'cache.php';
 
 function d($x) {
   echo '<br /><br /><pre>';
@@ -9,7 +10,6 @@ function d($x) {
 }
 
 class ModulesField extends BaseField {
-
   static public $assets = array(
     'js' => array(
       'modules.js'
@@ -19,16 +19,14 @@ class ModulesField extends BaseField {
     )
   );
 
-  public $fields    = array();
-  public $entry     = null;
-  public $structure = null;
-  public $style     = 'items';
+  public $entry = null;
+  public $cache = null;
+  public $path = null;
 
   public function routes() {
-
     return array(
       array(
-        'pattern' => 'add',
+        'pattern' => 'add/(:all)',
         'method'  => 'get|post',
         'action'  => 'add'
       ),
@@ -45,45 +43,35 @@ class ModulesField extends BaseField {
     );
   }
 
-  public function modalsize() {
-    return 'medium';
-  }
-
   public function style() {
     $styles = array('table', 'items');
     return in_array($this->style, $styles) ? $this->style : 'items';
   }
 
-  public function structure() {
-    if(!is_null($this->structure)) {
-      return $this->structure;
-    } else {
-      return $this->structure = $this->model->structure()->forField($this->name);
+  public function cache() {
+    if(isset($this->cache)){
+      return $this->cache;
     }
+
+    $field = $this->path()[0];
+    $this->cache = new ModulesCache($this->page()->id(), $field, $this->value());
+    return $this->cache;
   }
 
   public function entries() {
-      // TODO: We need to get this as a path (field1, index, field2) instead of simply $this->name... HOW?
-      // $data = (array)yaml::decode($this->model->{$this->name}());
-      $data = (array)yaml::decode($this->value());
-
-      foreach($data as $k => $v){
-          $v['id'] = str::random(32);
-          $data[$k] = $v;
-      }
-
-      $coll = new Collection($data);
-      $coll = $coll->map(function($item) {
-        return new Obj($item);
-      });
-
-      return $coll;
+    echo '<pre>';
+      print_r($this->cache()->collection($this->path())->data);
+    echo '</pre>';
+    return $this->cache()->collection($this->path());
   }
 
   public function result() {
+    $parent = parent::result();
+    $this->cache()->update($parent);
+
     $result = array();
 
-    foreach(parent::result() as $k => $v){
+    foreach($parent as $k => $v){
       if(isset($v['id'])){
         unset($v['id']);
       }
@@ -104,12 +92,38 @@ class ModulesField extends BaseField {
     return $label;
   }
 
+  public function path(){
+    if(isset($this->path)) return $this->path;
+
+    if(!isset($this->parent)){
+      $this->path = array($this->name);
+    } else {
+      $this->path = $this->parent->path();
+      $this->path[] = $this->name;
+    }
+
+    return $this->path;
+  }
+
   public function content() {
+    echo '<pre>';
+    echo $this->name;
+    echo "\n\n\n\n";
+      print_r($this->entries()->data);
+    echo '</pre>';
+
     return tpl::load(__DIR__ . DS . 'template.php', array('field' => $this));
   }
 
 
   public function url($action) {
-     return purl($this->model(), 'field/' . $this->name() . '/modules/' . $action);
+    $path = join('/', $this->path());
+    $root = $this->path()[0];
+    return purl($this->model(),
+                join('/', array('field',
+                                $root,
+                                'modules',
+                                $action,
+                                $path)));
   }
 }

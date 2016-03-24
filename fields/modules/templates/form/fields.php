@@ -4,29 +4,41 @@ class FormFields extends Brick {
   public $fields = array();
   public $values = array();
   public $tag    = 'fieldset';
-  public $parent = '';
+  public $parent = null;
   public $page = null;
+  public $prefix = '';
 
-  public function __construct($page = array(), $fields = array(), $values = array(), $parent = null) {
+  public function __construct($parent, $fields = array(), $values = array(), $prefix = null) {
     $this->fields = new Collection;
     $this->parent = $parent;
-    $this->page = $page;
+
+    $this->page = $parent->page;
+    $this->prefix = $prefix;
 
     $this->values($values);
     $this->fields($fields);
+  }
+
+  public function path($name){
+    $path = isset($this->parent) ? $this->parent->path() : array();
+    $path[] = $this->values()['id'];
+    $path[] = $name;
+    return $path;
   }
 
   public function fields($fields = null) {
     if(is_null($fields)) return $this->fields;
     foreach($fields as $name => $field) {
       $name = str_replace('-','_', str::lower($name));
-      $prefixedName = isset($this->parent) ? $this->parent . '[' . $name . ']' : $name;
+      $prefixedName = isset($this->prefix) ? $this->prefix . '[' . $name . ']' : $name;
 
       $field['name']    = $prefixedName;
       $field['default'] = a::get($field, 'default', null);
       $field['value']   = a::get($this->values(), $name, $field['default']);
       $field['page'] = $this->page;
       $field['model'] = $this->page;
+
+      $field['path'] = $this->path($name);
 
       $this->fields->append($prefixedName, static::field($field['type'], $field));
     }
