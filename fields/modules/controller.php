@@ -23,8 +23,6 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
 
         if($root !== $field){
             $data = $cache->parent($path);
-            print_r($path);
-            print_r($data);
             $type = $data['type'];
             $modules = $this->modulesForType($type, $field);
         } else {

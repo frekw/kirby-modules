@@ -50,22 +50,24 @@ class ModulesCache {
 
     function add($path, $data){
         array_shift($path);
-        $node = &$this->data;
+        $node = $this->data;
 
-        foreach($path as $part){
-            if(!isset($node[$part])){
-                $node[$part] = array();
-            }
-            $node = &$node[$part];
+        foreach($path as $p) {
+            $node = isset($node[$p]) ? $node[$p] : array();
         }
 
-        if(!isset($data['id'])){
-            $data['id'] = str::random(32);
+        if(is_array($node) && !$this->assoc($node)) {
+            $node = $this->withIds($node);
         }
 
-        $node[$data['id']] = $data;
+        if(!isset($node['id'])) {
+            $id = str::random(32);
+            $data['id'] = $id;
+            $node[$id] = $data;
+        }
 
-        $this->save();
+        $this->updateIn($path, $node);
+        return $node;
     }
 
     function parent($path) {
@@ -73,48 +75,57 @@ class ModulesCache {
         return $this->get($path);
     }
 
-    function ids(&$arr){
+    function assoc($arr) {
+        return is_array($arr) && array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
+    function withIds($arr){
+        $update = array();
+
         foreach($arr as $k => $v){
             if(!isset($v['id'])){
                 $id = str::random(32);
                 $v['id'] = $id;
             }
-            $arr[$v['id']] = $v;
+            $update[$v['id']] = $v;
         }
 
-        return $arr;
+        return $update;
     }
 
     function updateIn($path, $data){
         $node = &$this->data;
-        foreach($path as $part){
-            if(!isset($node[$part])) $node[$part] = array();
+        $last = end($path);
+        reset($path);
 
-            $node = &$node[$part];
+        foreach($path as $part){
+            return array();
+
+            if($part === $last){
+                $node[$part] = $data;
+            } else {
+                $node = &$node[$part];
+            }
         }
 
-        // foreach(&$this->data as $v)
-
-        $node = $data;
         $this->save();
     }
 
     function get($path) {
-        print_r($path);
         array_shift($path);
-        $ret = $this->data;
+        $node = $this->data;
 
-        foreach($path as $part) {
-            $ret = isset($ret[$part]) ? $ret[$part] : array();
+        foreach($path as $p) {
+            $node = isset($node[$p]) ? $node[$p] : array();
         }
 
-        if(is_array($ret)) {
-            $ret = $this->ids($ret);
-            $this->updateIn($path, $ret);
+        if(is_array($node) && !$this->assoc($node)) {
+            $update = $this->withIds($node);
+            $this->updateIn($path, $update);
+            return $update;
         }
 
-        print_r($this->data);
-        return $ret;
+        return $node;
     }
 
     function remove($id){

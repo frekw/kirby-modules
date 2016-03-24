@@ -60,7 +60,7 @@ class ModulesField extends BaseField {
 
   public function entries() {
     echo '<pre>';
-      print_r($this->cache()->collection($this->path())->data);
+        print_r($this->cache()->collection($this->path())->data);
     echo '</pre>';
     return $this->cache()->collection($this->path());
   }
@@ -106,12 +106,6 @@ class ModulesField extends BaseField {
   }
 
   public function content() {
-    echo '<pre>';
-    echo $this->name;
-    echo "\n\n\n\n";
-      print_r($this->entries()->data);
-    echo '</pre>';
-
     return tpl::load(__DIR__ . DS . 'template.php', array('field' => $this));
   }
 
