@@ -30,6 +30,30 @@ class ModulesPageCache extends Obj {
     $this->save();
   }
 
+  public function add($path, $data){
+    $node = &$this->data;
+    foreach($path as $p){
+      if(!isset($node[$p])){
+        return false;
+      }
+
+      $node = &$node[$p];
+    }
+
+    if(is_array($node)){
+      if(!isset($data['id'])){
+        $id = $this->id();
+        $data['id'] = $id;
+      }
+
+      $node[$data['id']] = $data;
+
+      $this->save();
+    }
+
+    return true;
+  }
+
   public function collection($path){
     $data = $this->get($path);
     $coll = new Collection($data);
@@ -115,8 +139,6 @@ class ModulesPageCache extends Obj {
   }
 
   function toModulesField($type, $data){
-    $result = array('_modules' => true);
-
     $result = array();
 
     foreach($data as $k => $v){
