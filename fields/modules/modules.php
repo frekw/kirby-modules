@@ -30,6 +30,17 @@ class ModulesPageCache extends Obj {
     $this->save();
   }
 
+  public function collection($path){
+    $data = $this->get($path);
+    $coll = new Collection($data);
+
+    $coll = $coll->map(function($item) {
+      return new Obj($item);
+    });
+
+    return $coll;
+  }
+
   public function get($path, $default = null){
     $result = $this->data;
     foreach($path as $p){
@@ -104,7 +115,7 @@ class ModulesPageCache extends Obj {
 
     foreach($data as $k => $v){
       $id = $this->id();
-      $v['_id'] = $id;
+      $v['id'] = $id;
       $result[$id] = $this->extractField($v['type'], $v);
     }
 
@@ -132,7 +143,7 @@ class ModulesPageCache extends Obj {
 
   function debug(){
     echo '<pre>';
-    var_dump($this->get(array('page_modules', 'VQ9vDAee1JcA10ykDnVPsbpYnYSo58uf', 'content', 'alqXObgyV6QJ5M7Kerc8c1ezkre3ZVRI', 'options', 'size')));
+    var_dump($this->collection(array('page_modules', 'VQ9vDAee1JcA10ykDnVPsbpYnYSo58uf', 'content')));
     echo '</pre>';
   }
 }
@@ -182,16 +193,11 @@ class ModulesField extends BaseField {
       return $this->cache;
     }
 
-    $field = $this->path()[0];
-    $this->cache = new ModulesCache($this->page()->id(), $field, isset($this->parent) ? $this->parent->value() : $this->value());
+    $this->cache = new ModulesPageCache($this->model());
     return $this->cache;
   }
 
   public function entries() {
-    echo '<pre>';
-    // var_dump($this->cache()->collection($this->path())->data);
-    // var_dump($this->cache()->data);
-    echo '</pre>';
     return $this->cache()->collection($this->path());
   }
 
