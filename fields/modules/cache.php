@@ -34,7 +34,7 @@ class ModulesPageCache extends Obj {
     $node = &$this->data;
     foreach($path as $p){
       if(!isset($node[$p])){
-        return false;
+        $node[$p] = array();
       }
 
       $node = &$node[$p];
@@ -50,8 +50,6 @@ class ModulesPageCache extends Obj {
 
       $this->save();
     }
-
-    return true;
   }
 
   public function collection($path){
@@ -107,7 +105,7 @@ class ModulesPageCache extends Obj {
   }
 
 
-  function data($content) {
+  function data($content = array()) {
     if(isset($this->data)) {
       return $this->data;
     }
