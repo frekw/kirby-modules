@@ -30,6 +30,16 @@ class ModulesPageCache extends Obj {
     $this->save();
   }
 
+  public function update($path, $data){
+    $node = &$this->data;
+
+    foreach($path as $p){
+      $node = &$node[$p];
+    }
+    $node = $data;
+    $this->save();
+  }
+
   public function add($path, $data){
     $node = &$this->data;
     foreach($path as $p){
@@ -84,9 +94,6 @@ class ModulesPageCache extends Obj {
     return $result;
   }
 
-  public function update($path, $data){
-  }
-
   public function save(){
     s::set($this->key, $this->data);
   }
@@ -110,7 +117,7 @@ class ModulesPageCache extends Obj {
   }
 
 
-  function data() {
+  function data($content) {
     if(isset($this->data)) {
       return $this->data;
     }
@@ -168,6 +175,28 @@ class ModulesPageCache extends Obj {
   function id(){
     return str::random(32);
   }
+
+
+  function serialize($data){
+    if(count($data) < 1) return $data;
+    if(!is_array($data)) return $data;
+
+    if(isset(reset($data)['id'])){
+      $result = array();
+      foreach($data as $k => $v) {
+        unset($v['id']);
+        $result[]= $this->serialize($v);
+      }
+
+      return $result;
+    }
+
+    foreach($data as $k => $v){
+      $data[$k] = $this->serialize($v);
+    }
+
+    return $data;
+  }
 }
 
 class ModulesField extends BaseField {
@@ -224,19 +253,11 @@ class ModulesField extends BaseField {
   }
 
   public function result() {
-    $parent = parent::result();
-    $this->cache()->update($parent);
+    $result = parent::result();
+    $this->cache()->update($this->path(), $result);
 
-    $result = array();
-
-    foreach($parent as $k => $v){
-      if(isset($v['id'])){
-        unset($v['id']);
-      }
-      $result[] = $v;
-    }
-
-    return trim(yaml::encode($result));
+    $result = $this->cache()->serialize($result);
+    return yaml::encode($result);
   }
 
   public function label() {
