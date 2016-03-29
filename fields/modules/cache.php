@@ -1,135 +1,190 @@
 <?php
 
-class ModulesCache {
-    public $key = '';
-    public $data = null;
+class ModulesPageCache extends Obj {
+  public $page = null;
+  public $key = '';
+  public $data = null;
 
-    function __construct($page, $field, $raw){
-        $this->key = 'modules::' . $page . '::' . $field;
-        $data = s::get($this->key);
+  function __construct($page){
+    $this->page = $page;
+    $this->key = 'modules::' . $page->id();
+    $this->blueprint = $this->page->blueprint()->yaml();
 
-        if(!isset($data)){
-            $data = (array)yaml::decode($raw);
-        }
+    $data = s::get($this->key);
 
-        $this->update($data);
+    if(!isset($data)){
+      $data = $this->data();
     }
 
-    function save(){
-        s::set($this->key, $this->data);
+    $this->data = $data;
+    $this->save();
+  }
+
+  public function update($path, $data){
+    $node = &$this->data;
+
+    foreach($path as $p){
+      $node = &$node[$p];
+    }
+    $node = $data;
+    $this->save();
+  }
+
+  public function add($path, $data){
+    $node = &$this->data;
+    foreach($path as $p){
+      if(!isset($node[$p])){
+        return false;
+      }
+
+      $node = &$node[$p];
     }
 
-    public function data(){
-        return $this->data;
+    if(is_array($node)){
+      if(!isset($data['id'])){
+        $id = $this->id();
+        $data['id'] = $id;
+      }
+
+      $node[$data['id']] = $data;
+
+      $this->save();
     }
 
-    public function collection($path = array()){
-        $data = $this->get($path);
-        $coll = new Collection($data);
+    return true;
+  }
 
-        $coll = $coll->map(function($item) {
-            return new Obj($item);
-        });
+  public function collection($path){
+    $data = $this->get($path);
+    $coll = new Collection($data);
 
-        return $coll;
+    $coll = $coll->map(function($item) {
+      return new Obj($item);
+    });
+
+    return $coll;
+  }
+
+  public function parent($path){
+    $p = $path;
+    array_pop($p);
+    return $this->get($p);
+  }
+
+  public function get($path, $default = null){
+    $result = $this->data;
+    foreach($path as $p){
+
+      if(!isset($result[$p])){
+        return $default;
+      }
+
+      $result = $result[$p];
+    }
+    return $result;
+  }
+
+  public function save(){
+    s::set($this->key, $this->data);
+  }
+
+  function typeForField($field, $blueprint) {
+    if(!isset($field)) {
+      return null;
     }
 
-    // TODO: Should be $path, $data ?
-    function update($data){
-        $arr = array();
-        foreach($data as $k => $v){
-            if(!isset($v['id'])){
-                $v['id'] = str::random(32);
-            }
-            $arr[$v['id']] = $v;
-        }
-
-        $this->data = $arr;
-        $this->save();
+    if(!isset($blueprint) ||
+       !isset($blueprint['fields']) ||
+       !isset($blueprint['fields'][$field])){
+      return null;
     }
 
-    function add($path, $data){
-        array_shift($path);
-        $node = $this->data;
+    return $blueprint['fields'][$field]['type'];
+  }
 
-        foreach($path as $p) {
-            $node = isset($node[$p]) ? $node[$p] : array();
-        }
+  function isModulesField($field, $blueprint){
+    return $this->typeForField($field, $blueprint) === 'modules';
+  }
 
-        if(is_array($node) && !$this->assoc($node)) {
-            $node = $this->withIds($node);
-        }
 
-        if(!isset($node['id'])) {
-            $data['id'] = str::random(32);
-            $node[$data['id']] = $data;
-        }
-
-        $this->updateIn($path, $node);
-        return $node;
+  function data($content) {
+    if(isset($this->data)) {
+      return $this->data;
     }
 
-    function parent($path) {
-        if(count($path) > 1) array_pop($path);
-        return $this->get($path);
+    $data = array();
+    $content = $this->page()->content();
+
+    foreach($content->fields() as $field){
+      $type = $this->typeForField($field, $this->blueprint);
+      if($this->isModulesField($field, $this->blueprint)){
+        $data[$field] = $this->toModulesField($type, yaml::decode($content->get($field)));
+      }
     }
 
-    function updateIn($path, $data){
-        return $data;
+    return $this->data = $data;
+  }
 
-        $last = end($path);
-        reset($path);
+  function moduleBlueprint($type){
+    $path = f::resolve(implode(DS, array(kirby()->roots()->blueprints(), 'modules', $type)), array('php', 'yaml', 'yml'));
 
-        $node = &$this->data;
-        foreach($path as $part){
-            if(!isset($node[$part])) return array();
-
-            if($part === $last){
-                $node[$part] = $data;
-            } else {
-                $node = &$node[$part];
-            }
-        }
-
-        $this->save();
+    if($path){
+      return yaml::decode(f::read($path));
     }
 
-    function get($path) {
-        array_shift($path);
-        $node = $this->data;
+    return array();
+  }
 
-        foreach($path as $p) {
-            $node = isset($node[$p]) ? $node[$p] : array();
-        }
+  function toModulesField($type, $data){
+    $result = array();
 
-        if(is_array($node) && !$this->assoc($node)) {
-            $update = $this->withIds($node);
-            $this->updateIn($path, $update);
-            return $update;
-        }
-
-        return $node;
+    foreach($data as $k => $v){
+      $id = $this->id();
+      $v['id'] = $id;
+      $result[$id] = $this->extractField($v['type'], $v);
     }
 
-    function remove($id){
+    return $result;
+  }
+
+
+  function extractField($type, $data){
+    $blueprint = $this->moduleBlueprint($type);
+
+    foreach($data as $k => $v){
+      $type = $this->typeForField($k, $blueprint);
+
+      if($this->isModulesField($k, $blueprint)){
+        $data[$k] = $this->toModulesField($type, $v);
+      }
     }
 
-    function assoc($arr) {
-        return is_array($arr) && array_keys($arr) !== range(0, count($arr) - 1);
+    return $data;
+  }
+
+  function id(){
+    return str::random(32);
+  }
+
+
+  function serialize($data){
+    if(count($data) < 1) return $data;
+    if(!is_array($data)) return $data;
+
+    if(isset(reset($data)['id'])){
+      $result = array();
+      foreach($data as $k => $v) {
+        unset($v['id']);
+        $result[]= $this->serialize($v);
+      }
+
+      return $result;
     }
 
-    function withIds($arr){
-        $update = array();
-
-        foreach($arr as $k => $v){
-            if(!isset($v['id'])){
-                $id = str::random(32);
-                $v['id'] = $id;
-            }
-            $update[$v['id']] = $v;
-        }
-
-        return $update;
+    foreach($data as $k => $v){
+      $data[$k] = $this->serialize($v);
     }
+
+    return $data;
+  }
 }
-
