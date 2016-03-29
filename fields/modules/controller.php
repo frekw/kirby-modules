@@ -19,7 +19,7 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
     $root = first($path);
     $field = last($path);
     $model = $this->model();
-    $cache = new ModulesCache($model->id(), $root, $model->value());
+    $cache = new ModulesPageCache($model);
 
     if($root !== $field){
       $data = $cache->parent($path);
@@ -43,7 +43,6 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
 
       $cache->add($path, $form->serialize());
       $self->redirect($model);
-
     });
 
     return $this->modal('add', compact('form', 'modalsize'));

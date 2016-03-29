@@ -41,6 +41,12 @@ class ModulesPageCache extends Obj {
     return $coll;
   }
 
+  public function parent($path){
+    $p = $path;
+    array_pop($p);
+    return $this->get($p);
+  }
+
   public function get($path, $default = null){
     $result = $this->data;
     foreach($path as $p){
