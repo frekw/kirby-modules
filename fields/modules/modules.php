@@ -13,23 +13,29 @@ function d($x) {
 class ModulesPageCache extends Obj {
   public $page = null;
   public $key = '';
+  public $data = null;
 
   function __construct($page){
     $this->page = $page;
     $this->key = 'modules::' . $page->id();
     $this->blueprint = $this->page->blueprint()->yaml();
-  }
 
-  function content() {
-    $data = $this->page()->content()->data();
+    $data = s::get($this->key);
 
-    $result = array();
-    foreach($data as $k => $v){
-      $sanitized = str_replace('-','_', str::lower($k));
-      $result[$sanitized] = $v;
+    if(!isset($data)){
+      $data = $this->data();
     }
 
-    return $result;
+    $this->update($data);
+  }
+
+  public function update($data){
+    $this->data = $data;
+    $this->save();
+  }
+
+  public function save(){
+    s::set($this->key, $this->data);
   }
 
   function typeForField($field, $blueprint) {
@@ -52,22 +58,21 @@ class ModulesPageCache extends Obj {
 
 
   function data() {
-    $result = array();
+    if(isset($this->data)) {
+      return $this->data;
+    }
 
-    $path = array();
+    $data = array();
     $content = $this->page()->content();
 
     foreach($content->fields() as $field){
-      $p = $path;
-      $p[] = $field;
-
       $type = $this->typeForField($field, $this->blueprint);
       if($this->isModulesField($field, $this->blueprint)){
-        $result[$field] = $this->toModulesField($type, yaml::decode($content->get($field)));
+        $data[$field] = $this->toModulesField($type, yaml::decode($content->get($field)));
       }
     }
 
-    return $result;
+    return $this->data = $data;
   }
 
   function moduleBlueprint($type){
@@ -96,9 +101,6 @@ class ModulesPageCache extends Obj {
 
 
   function extractField($type, $data){
-    // return $data;
-    //if(!$data) return;
-
     $blueprint = $this->moduleBlueprint($type);
 
     foreach($data as $k => $v){
@@ -120,21 +122,6 @@ class ModulesPageCache extends Obj {
     echo '<pre>';
     var_dump($this->data());
     echo '</pre>';
-
-    // echo '<pre>';
-    // var_dump($this->page()->content()->raw());
-    // echo "\n\n\n\n";
-    // var_dump($this->page()->content()->fields());
-    // echo "\n\n\n\n";
-    // var_dump($this->blueprint());
-    // echo "\n\n\n\n";
-
-    // foreach($this->page->content()->fields() as $f){
-    //   // var_dump($this->page->getBlueprintFields()->get($f));
-    //   echo "\n\n\n\n";
-    // }
-
-    // echo '</pre>';
   }
 }
 
