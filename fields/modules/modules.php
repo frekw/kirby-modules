@@ -25,12 +25,7 @@ class ModulesField extends BaseField {
         'action'  => 'add'
       ),
       array(
-        'pattern' => 'sort',
-        'method'  => 'post',
-        'action'  => 'sort',
-      ),
-      array(
-        'pattern' => '(:any)/delete',
+        'pattern' => 'delete/(:all)',
         'method'  => 'get|post',
         'action'  => 'delete',
       )

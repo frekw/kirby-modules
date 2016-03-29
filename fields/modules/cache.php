@@ -52,6 +52,18 @@ class ModulesPageCache extends Obj {
     }
   }
 
+  public function delete($path){
+    $id = array_pop($path);
+    $node = &$this->data;
+
+    foreach($path as $p){
+      $node = &$node[$p];
+    }
+
+    unset($node[$id]);
+    $this->save();
+  }
+
   public function collection($path){
     $data = $this->get($path);
     $coll = new Collection($data);
@@ -71,8 +83,8 @@ class ModulesPageCache extends Obj {
 
   public function get($path, $default = null){
     $result = $this->data;
-    foreach($path as $p){
 
+    foreach($path as $p){
       if(!isset($result[$p])){
         return $default;
       }

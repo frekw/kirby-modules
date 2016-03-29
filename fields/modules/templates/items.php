@@ -10,7 +10,9 @@ foreach($field->entries() as $i => $entry): ?>
     <li><a href="#modules-entry-options-<?php echo $entry->id() ?>">Settings</a></li>
   </ul>
   <?php if(!$field->readonly()): ?>
-  <a data-modal class="btn btn-icon btn-rounded btn-negative modules-entry-delete" href="<?php __($field->url($entry->id() . '/delete')) ?>">
+    <a data-modal
+       class="btn btn-icon btn-rounded btn-negative modules-entry-delete"
+       href="<?php __($field->url('delete') . '/' . $entry->id()) ?>">
     <?php i('trash-o', 'left') . _l('fields.structure.delete') ?>
   </a>
   <?php endif; ?>

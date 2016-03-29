@@ -1,25 +1,13 @@
 <?php
-
 require_once __DIR__ . DS . 'cache.php';
-
-function last(&$arr){
-  $x = end($arr);
-  reset($arr);
-  return $x;
-}
-
-function first(&$arr){
-  reset($arr);
-  return $arr[0];
-}
 
 class ModulesFieldController extends Kirby\Panel\Controllers\Field {
   public function add($path) {
     $path = explode('/', $path);
-    $root = first($path);
-    $field = last($path);
+    $root = $this->first($path);
+    $field = $this->last($path);
     $model = $this->model();
-    $cache = new ModulesPageCache($model);
+    $cache = $this->cache($model);
 
     if($root !== $field){
       $data = $cache->parent($path);
@@ -46,6 +34,39 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
     });
 
     return $this->modal('add', compact('form', 'modalsize'));
+  }
+
+  public function delete($path) {
+    $path = explode('/', $path);
+    $self = $this;
+    $model = $this->model();
+    $cache = $this->cache($model);
+    $entry = $cache->get($path);
+
+    if(!$entry) {
+      return $this->modal('error', array(
+        'text' => 'Unable to find module.'
+      ));
+    }
+
+    $form = $this->form('delete', $model, function() use($self, $model, $cache, $path) {
+      $cache->delete($path);
+      $self->redirect($model);
+    });
+
+    return $this->modal('delete', compact('form'));
+
+  }
+
+  function last(&$arr){
+    $x = end($arr);
+    reset($arr);
+    return $x;
+  }
+
+  function first(&$arr){
+    reset($arr);
+    return $arr[0];
   }
 
   protected function modulesToOptions($modules){
@@ -92,36 +113,7 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
     }
   }
 
-  public function delete($entryId) {
-
-    $self      = $this;
-    $model     = $this->model();
-    $structure = $this->structure($model);
-    $entry     = $structure->find($entryId);
-
-    if(!$entry) {
-      return $this->modal('error', array(
-        'text' => l('fields.structure.entry.error')
-      ));
-    }
-
-    $form = $this->form('delete', $model, function() use($self, $model, $structure, $entryId) {
-      $structure->delete($entryId);
-      $self->redirect($model);
-    });
-
-    return $this->modal('delete', compact('form'));
-
-  }
-
-  public function sort() {
-    $model     = $this->model();
-    $structure = $this->structure($model);
-    $structure->sort(get('ids'));
-    $this->redirect($model);
-  }
-
-  protected function structure($model) {
-    return $model->structure()->forField($this->fieldname());
+  protected function cache($model) {
+    return new ModulesPageCache($model);
   }
 }
