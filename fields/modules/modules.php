@@ -9,6 +9,135 @@ function d($x) {
   echo '</pre>';
 }
 
+
+class ModulesPageCache extends Obj {
+  public $page = null;
+  public $key = '';
+
+  function __construct($page){
+    $this->page = $page;
+    $this->key = 'modules::' . $page->id();
+    $this->blueprint = $this->page->blueprint()->yaml();
+  }
+
+  function content() {
+    $data = $this->page()->content()->data();
+
+    $result = array();
+    foreach($data as $k => $v){
+      $sanitized = str_replace('-','_', str::lower($k));
+      $result[$sanitized] = $v;
+    }
+
+    return $result;
+  }
+
+  function typeForField($field, $blueprint) {
+    if(!isset($field)) {
+      return null;
+    }
+
+    if(!isset($blueprint) ||
+       !isset($blueprint['fields']) ||
+       !isset($blueprint['fields'][$field])){
+      return null;
+    }
+
+    return $blueprint['fields'][$field]['type'];
+  }
+
+  function isModulesField($field, $blueprint){
+    return $this->typeForField($field, $blueprint) === 'modules';
+  }
+
+
+  function data() {
+    $result = array();
+
+    $path = array();
+    $content = $this->page()->content();
+
+    foreach($content->fields() as $field){
+      $p = $path;
+      $p[] = $field;
+
+      $type = $this->typeForField($field, $this->blueprint);
+      if($this->isModulesField($field, $this->blueprint)){
+        $result[$field] = $this->toModulesField($type, yaml::decode($content->get($field)));
+      }
+    }
+
+    return $result;
+  }
+
+  function moduleBlueprint($type){
+    $path = f::resolve(implode(DS, array(kirby()->roots()->blueprints(), 'modules', $type)), array('php', 'yaml', 'yml'));
+
+    if($path){
+      return yaml::decode(f::read($path));
+    }
+
+    return array();
+  }
+
+  function toModulesField($type, $data){
+    $result = array('_modules' => true);
+
+    $result = array();
+
+    foreach($data as $k => $v){
+      $id = $this->id();
+      $v['_id'] = $id;
+      $result[$id] = $this->extractField($v['type'], $v);
+    }
+
+    return $result;
+  }
+
+
+  function extractField($type, $data){
+    // return $data;
+    //if(!$data) return;
+
+    $blueprint = $this->moduleBlueprint($type);
+
+    foreach($data as $k => $v){
+      $type = $this->typeForField($k, $blueprint);
+
+      if($this->isModulesField($k, $blueprint)){
+        $data[$k] = $this->toModulesField($type, $v);
+      }
+    }
+
+    return $data;
+  }
+
+  function id(){
+    return str::random(32);
+  }
+
+  function debug(){
+    echo '<pre>';
+    var_dump($this->data());
+    echo '</pre>';
+
+    // echo '<pre>';
+    // var_dump($this->page()->content()->raw());
+    // echo "\n\n\n\n";
+    // var_dump($this->page()->content()->fields());
+    // echo "\n\n\n\n";
+    // var_dump($this->blueprint());
+    // echo "\n\n\n\n";
+
+    // foreach($this->page->content()->fields() as $f){
+    //   // var_dump($this->page->getBlueprintFields()->get($f));
+    //   echo "\n\n\n\n";
+    // }
+
+    // echo '</pre>';
+  }
+}
+
 class ModulesField extends BaseField {
   static public $assets = array(
     'js' => array(
@@ -43,6 +172,7 @@ class ModulesField extends BaseField {
     );
   }
 
+
   public function style() {
     $styles = array('table', 'items');
     return in_array($this->style, $styles) ? $this->style : 'items';
@@ -54,13 +184,14 @@ class ModulesField extends BaseField {
     }
 
     $field = $this->path()[0];
-    $this->cache = new ModulesCache($this->page()->id(), $field, $this->value());
+    $this->cache = new ModulesCache($this->page()->id(), $field, isset($this->parent) ? $this->parent->value() : $this->value());
     return $this->cache;
   }
 
   public function entries() {
     echo '<pre>';
-        print_r($this->cache()->collection($this->path())->data);
+    // var_dump($this->cache()->collection($this->path())->data);
+    // var_dump($this->cache()->data);
     echo '</pre>';
     return $this->cache()->collection($this->path());
   }
@@ -106,6 +237,7 @@ class ModulesField extends BaseField {
   }
 
   public function content() {
+    (new ModulesPageCache($this->model()))->debug();
     return tpl::load(__DIR__ . DS . 'template.php', array('field' => $this));
   }
 

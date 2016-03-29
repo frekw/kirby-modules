@@ -15,6 +15,14 @@ class ModulesCache {
         $this->update($data);
     }
 
+    function save(){
+        s::set($this->key, $this->data);
+    }
+
+    public function data(){
+        return $this->data;
+    }
+
     public function collection($path = array()){
         $data = $this->get($path);
         $coll = new Collection($data);
@@ -24,10 +32,6 @@ class ModulesCache {
         });
 
         return $coll;
-    }
-
-    public function data(){
-        return $this->data;
     }
 
     // TODO: Should be $path, $data ?
@@ -44,10 +48,6 @@ class ModulesCache {
         $this->save();
     }
 
-    function save(){
-        s::set($this->key, $this->data);
-    }
-
     function add($path, $data){
         array_shift($path);
         $node = $this->data;
@@ -61,9 +61,8 @@ class ModulesCache {
         }
 
         if(!isset($node['id'])) {
-            $id = str::random(32);
-            $data['id'] = $id;
-            $node[$id] = $data;
+            $data['id'] = str::random(32);
+            $node[$data['id']] = $data;
         }
 
         $this->updateIn($path, $node);
@@ -75,31 +74,15 @@ class ModulesCache {
         return $this->get($path);
     }
 
-    function assoc($arr) {
-        return is_array($arr) && array_keys($arr) !== range(0, count($arr) - 1);
-    }
-
-    function withIds($arr){
-        $update = array();
-
-        foreach($arr as $k => $v){
-            if(!isset($v['id'])){
-                $id = str::random(32);
-                $v['id'] = $id;
-            }
-            $update[$v['id']] = $v;
-        }
-
-        return $update;
-    }
-
     function updateIn($path, $data){
-        $node = &$this->data;
+        return $data;
+
         $last = end($path);
         reset($path);
 
+        $node = &$this->data;
         foreach($path as $part){
-            return array();
+            if(!isset($node[$part])) return array();
 
             if($part === $last){
                 $node[$part] = $data;
@@ -129,6 +112,24 @@ class ModulesCache {
     }
 
     function remove($id){
+    }
+
+    function assoc($arr) {
+        return is_array($arr) && array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
+    function withIds($arr){
+        $update = array();
+
+        foreach($arr as $k => $v){
+            if(!isset($v['id'])){
+                $id = str::random(32);
+                $v['id'] = $id;
+            }
+            $update[$v['id']] = $v;
+        }
+
+        return $update;
     }
 }
 
