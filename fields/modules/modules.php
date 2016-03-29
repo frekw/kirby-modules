@@ -140,12 +140,6 @@ class ModulesPageCache extends Obj {
   function id(){
     return str::random(32);
   }
-
-  function debug(){
-    echo '<pre>';
-    var_dump($this->collection(array('page_modules', 'VQ9vDAee1JcA10ykDnVPsbpYnYSo58uf', 'content')));
-    echo '</pre>';
-  }
 }
 
 class ModulesField extends BaseField {
@@ -242,7 +236,6 @@ class ModulesField extends BaseField {
   }
 
   public function content() {
-    (new ModulesPageCache($this->model()))->debug();
     return tpl::load(__DIR__ . DS . 'template.php', array('field' => $this));
   }
 
