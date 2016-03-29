@@ -26,12 +26,24 @@ class ModulesPageCache extends Obj {
       $data = $this->data();
     }
 
-    $this->update($data);
-  }
-
-  public function update($data){
     $this->data = $data;
     $this->save();
+  }
+
+  public function get($path, $default = null){
+    $result = $this->data;
+    foreach($path as $p){
+
+      if(!isset($result[$p])){
+        return $default;
+      }
+
+      $result = $result[$p];
+    }
+    return $result;
+  }
+
+  public function update($path, $data){
   }
 
   public function save(){
@@ -120,7 +132,7 @@ class ModulesPageCache extends Obj {
 
   function debug(){
     echo '<pre>';
-    var_dump($this->data());
+    var_dump($this->get(array('page_modules', 'VQ9vDAee1JcA10ykDnVPsbpYnYSo58uf', 'content', 'alqXObgyV6QJ5M7Kerc8c1ezkre3ZVRI', 'options', 'size')));
     echo '</pre>';
   }
 }
