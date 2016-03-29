@@ -4,7 +4,7 @@ return function($model) {
 
   $form = new Kirby\Panel\Form(array(
     'entry' => array(
-      'label' => 'fields.structure.delete.label',
+      'label' => 'Do you really want to delete this module?',
       'type'  => 'info',
     )
   ));
