@@ -1,4 +1,6 @@
 # kirby-modules
+**WARNING: This is still in early alpha. Use at your own discretion.**
+
 `kirby-modules` is a custom field for Kirby which allows you to divide a page into modules. A module can be repeated multiple times on a single page as well as re-used between multiple page blueprints.
 
 A similar concept would be a more advanced version of Kirby’s structure field or [ACF](https://www.advancedcustomfields.com/add-ons/repeater-field/) for Wordpress.
