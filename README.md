@@ -27,7 +27,7 @@ A module consists of a three parts:
 A module may also have an optional `options` field controlling options that can be used to e.g modify how the module is rendered.
 
 `site/blueprints/module/hero.php`
-```
+```php
 type: Hero
 fields:
   title:
@@ -54,7 +54,7 @@ options:
 ```
 
 `site/modules/hero/template.php`
-```
+```php
 <div class=“hero hero—align-<?php echo $module->options->position->value() ?>”
      <?php if($module->image->value()): ?>style=“background-image:url(<?php echo $module->image->toFile()->url() ?>);”<?php endif; ?>>
   <h1><?php echo $module->title->value() ?></h1>
@@ -70,7 +70,7 @@ options:
 ### Using a module.
 You use a module by adding a `modules` field to a blueprint, such as:
 
-```
+```yaml
 fields:
   title:
     label: Title
@@ -101,13 +101,13 @@ kirby-modules can combine all javascripts and stylesheets for all modules on dem
 
 To use this, modify `site/config/config.php` to contain
 
-```
+```php
 c::set(‘modules.assets’, true);
 ```
 
 and use them by adding them to your template:
 
-```
+```php
   <?php echo css(‘modules.css’) ?>
   <?php echo js(‘modules.js’) ?>
 
