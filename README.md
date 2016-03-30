@@ -55,8 +55,8 @@ options:
 
 `site/modules/hero/template.php`
 ```php
-<div class=“hero hero—align-<?php echo $module->options->position->value() ?>”
-     <?php if($module->image->value()): ?>style=“background-image:url(<?php echo $module->image->toFile()->url() ?>);”<?php endif; ?>>
+<div class="hero hero—align-<?php echo $module->options->position->value() ?>"
+     <?php if($module->image->value()): ?>style="background-image:url(<?php echo $module->image->toFile()->url() ?>);"<?php endif; ?>>
   <h1><?php echo $module->title->value() ?></h1>
   <?php if(!$module->subtitle->empty()): ?>
     <?php echo $module->subtitle->kirbytext() ?>
@@ -102,14 +102,14 @@ You can nest modules by adding a `modules` field to the module’s field definit
 To use this, modify `site/config/config.php` to contain
 
 ```php
-c::set(‘modules.assets’, true);
+c::set('modules.assets', true);
 ```
 
 and use them by adding them to your template:
 
 ```php
-  <?php echo css(‘modules.css’) ?>
-  <?php echo js(‘modules.js’) ?>
+  <?php echo css('modules.css') ?>
+  <?php echo js('modules.js') ?>
 
 ```
 
