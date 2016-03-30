@@ -67,7 +67,7 @@ options:
 
  definition as well as its own template and controller logic to make it as isolated as possible.
 
-### Using a module.
+### Using a module
 You use a module by adding a `modules` field to a blueprint, such as:
 
 ```yaml
