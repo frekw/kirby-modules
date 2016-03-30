@@ -12,7 +12,7 @@ class ModulesAssetsController {
   }
 }
 
-class Modules extends Brick {
+class Modules {
   public static $routes = array(
     array(
       'pattern' => 'modules.js',
@@ -27,10 +27,11 @@ class Modules extends Brick {
   );
 
   public $modules = array();
-  public $tag = 'div';
 
   public function __construct($field) {
-    foreach($field->yaml() as $v) {
+    $data = is_array($field->value()) ? $field->value() : $field->yaml();
+
+    foreach($data as $v) {
       if(!isset($v['type'])) {
         throw new Exception('Missing field type for module: ' . $v);
       }
@@ -39,26 +40,29 @@ class Modules extends Brick {
   }
 
   public function render(){
+    $output = array();
+
     foreach($this->modules as $m){
-      $this->append($m->render());
+      $output[] = $m->render();
     }
-    return $this;
+
+    return implode("\n", $output);
   }
 
   static public function js() {
     return self::respond(implode(DS, array(kirby()->roots->modules,
-                                  '*',
-                                  'assets',
-                                  'js',
-                                  '**.js')));
+                                           '*',
+                                           'assets',
+                                           'js',
+                                           '**.js')));
   }
 
   static public function css() {
     return self::respond(implode(DS, array(kirby()->roots->modules,
-                                   '*',
-                                   'assets',
-                                   'css',
-                                   '**.css')));
+                                           '*',
+                                           'assets',
+                                           'css',
+                                           '**.css')));
 
   }
 
