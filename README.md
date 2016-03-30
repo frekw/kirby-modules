@@ -1,15 +1,15 @@
 # kirby-modules
-kirby-modules is a custom field for Kirby which allows you to divide a page into modules. A module can be repeated multiple times on a single page as well as re-used between multiple page blueprints.
+`kirby-modules` is a custom field for Kirby which allows you to divide a page into modules. A module can be repeated multiple times on a single page as well as re-used between multiple page blueprints.
 
 A similar concept would be a more advanced version of Kirby’s structure field or [ACF](https://www.advancedcustomfields.com/add-ons/repeater-field/) for Wordpress.
 
-kirby-modules also allows a module definition to contain other modules to further modularise the page content into small reusable chunks.
+`kirby-modules` also allows a module definition to contain other modules to further modularise the page content into small reusable chunks.
 
 
 ## Installation
 Download the [zip](https://github.com/frekw/kirby-modules/archive/master.zip) and move the contents of the `plugins` directory to `site/plugins` and the contents of the `fields` directory into `site/fields`.
 
-Since kirby-modules consists of both a plugin and a field, installation via `git submodule add` is unfortunately not possible.
+Since `kirby-modules` consists of both a plugin and a field, installation via `git submodule add` is unfortunately not possible.
 
 ## Motivation
 Often when working with content – whether it’s a one pager or an article – you want to separate the styling from the content as much as possible.
@@ -94,10 +94,10 @@ The `modules` field allows you to specify what modules the blueprint may contain
 You can nest modules by adding a `modules` field to the module’s field definition.
 
 ### Field helpers
-kirby-modules adds the `modules` field helper that will render all modules for a modules field with their corresponding controller and template.
+`kirby-modules` adds the `modules` field helper that will render all modules for a modules field with their corresponding controller and template.
 
 ### Assets
-kirby-modules can combine all javascripts and stylesheets for all modules on demand.
+`kirby-modules` can combine all javascripts and stylesheets for all modules on demand.
 
 To use this, modify `site/config/config.php` to contain
 
