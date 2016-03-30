@@ -5,6 +5,8 @@ A similar concept would be a more advanced version of Kirby’s structure field 
 
 `kirby-modules` also allows a module definition to contain other modules to further modularise the page content into small reusable chunks.
 
+![kirby-modules example](http://i.imgur.com/rXPuthT.gif)
+
 
 ## Installation
 Download the [zip](https://github.com/frekw/kirby-modules/archive/master.zip) and move the contents of the `plugins` directory to `site/plugins` and the contents of the `fields` directory into `site/fields`.
