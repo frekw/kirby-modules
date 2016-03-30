@@ -27,7 +27,7 @@ A module consists of a three parts:
 A module may also have an optional `options` field controlling options that can be used to e.g modify how the module is rendered.
 
 `site/blueprints/module/hero.php`
-```php
+```yaml
 type: Hero
 fields:
   title:
