@@ -101,3 +101,19 @@
   background:#fff;
   font-weight:bold;
 }
+
+.accordion-toggle:before {
+  display: inline-block;
+  font-family: monospace;
+  margin-right: 0.5em;
+  position:relative;
+  top:-0.25em;
+}
+
+.accordion-toggle.accordion--open:before {
+  content: '[-]';
+}
+
+.accordion-toggle.accordion--closed:before {
+  content: '[+]';
+}
