@@ -1,11 +1,11 @@
 <?php
 require_once implode(DS, array(__DIR__, 'fields.php'));
 
-// TODO: Static module cache.
 class FormBuilder {
+    public static $cache = array();
+
     public $entry = null;
     public $type = null;
-    public $cache = array();
     public $parent = null;
     public $path = null;
 
@@ -17,14 +17,14 @@ class FormBuilder {
     }
 
     public function blueprint() {
-        if(isset($this->cache['blueprint'])) {
-            return $this->cache['blueprint'];
+        if(isset(self::$cache[$this->type])) {
+            return self::$cache[$this->type];
         }
 
         $path = f::resolve(implode(DS, array(kirby()->roots()->blueprints(), 'modules', $this->type)),
                            array('yml', 'php', 'yaml'));
 
-        return $this->cache['blueprint'] = data::read($path, 'yaml');
+        return self::$cache[$this->type] = data::read($path, 'yaml');
     }
 
     public function hasOptions() {
