@@ -7,7 +7,7 @@ foreach($field->entries() as $i => $entry): ?>
   <h4 class="modules-type accordion-toggle accordion--open"><?php echo ucfirst($entry->type()); ?> Module</h4>
     <div class="accordion-content">
 
-    <?php if(isset($entry->options)): ?>
+    <?php if($form('hasOptions', $entry, $field)): ?>
     <ul class="tabs">
       <li><a href="#modules-entry-fields-<?php echo $entry->id() ?>">Content</a></li>
       <li><a href="#modules-entry-options-<?php echo $entry->id() ?>">Settings</a></li>
@@ -28,7 +28,7 @@ foreach($field->entries() as $i => $entry): ?>
           <?php $form('fields', $entry, $field); ?>
         </div>
 
-        <?php if(isset($entry->options)): ?>
+        <?php if($form('hasOptions', $entry, $field)): ?>
           <div class="modules-entry-options" id="modules-entry-options-<?php echo $entry->id() ?>">
             <?php $form('options', $entry, $field); ?>
           </div>

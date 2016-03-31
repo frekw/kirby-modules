@@ -1,6 +1,7 @@
 <?php
 require_once implode(DS, array(__DIR__, 'fields.php'));
 
+// TODO: Static module cache.
 class FormBuilder {
     public $entry = null;
     public $type = null;
@@ -24,6 +25,10 @@ class FormBuilder {
                            array('yml', 'php', 'yaml'));
 
         return $this->cache['blueprint'] = data::read($path, 'yaml');
+    }
+
+    public function hasOptions() {
+      return isset($this->blueprint()['options']);
     }
 
     public function render($type = 'fields') {
@@ -64,7 +69,10 @@ class FormBuilder {
 
     public function options() {
         $blueprint = $this->blueprint();
-        return new FormFields($this->parent, $blueprint['options'], $this->values()['options'], $this->prefix('options'));
+        $values = $this->values();
+        $values = isset($values['options']) ? $values['options'] : array();
+
+        return new FormFields($this->parent, $blueprint['options'], $values, $this->prefix('options'));
     }
 
     public function values($fields = array()) {
