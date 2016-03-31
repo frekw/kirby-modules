@@ -64,7 +64,7 @@ class FormBuilder {
 
     public function options() {
         $blueprint = $this->blueprint();
-        return new FormFields($this->parent, $blueprint['options'], $this->values(), $this->prefix('options'));
+        return new FormFields($this->parent, $blueprint['options'], $this->values()['options'], $this->prefix('options'));
     }
 
     public function values($fields = array()) {
