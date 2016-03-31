@@ -4,7 +4,7 @@ $form = require implode(DS, array(__DIR__, 'form.php'));
 foreach($field->entries() as $i => $entry): ?>
 
 <div class="modules-entry" id="modules-entry-<?php echo $entry->id() ?>">
-  <h4 class="modules-type accordion-toggle"><?php echo ucfirst($entry->type()); ?> Module</h4>
+  <h4 class="modules-type accordion-toggle accordion--open"><?php echo ucfirst($entry->type()); ?> Module</h4>
     <div class="accordion-content">
 
     <?php if(isset($entry->options)): ?>

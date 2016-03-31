@@ -62,10 +62,6 @@
 
       this.toggle($(e.target));
     }.bind(this));
-
-    this.$el.find(options.toggle).each(function(i, el){
-      this.toggle($(el));
-    }.bind(this));
   };
 
   Accordion.prototype.toggle = function($target){
