@@ -98,6 +98,11 @@
 
     if(sortable === false) return false;
 
+    // This is really ugly. Oh well.
+    element.find('> .modules-entries > .modules-actions > .modules-add-button, > .modules-entries > .modules-empty > p > .modules-empty-add-button').on('click', function(){
+      $(this).closest('form').trigger('keep');
+    });
+
 
     element.sortable({
       items: '.modules-entry',
