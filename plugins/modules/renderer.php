@@ -6,7 +6,7 @@ class ModuleRenderer {
 
   public function __construct($type, $data, $page){
     $this->type = $type;
-    $this->data = new stdClass();
+    $this->data = new Obj();
 
     foreach($data as $k => $v){
       if($k === 'options') {
