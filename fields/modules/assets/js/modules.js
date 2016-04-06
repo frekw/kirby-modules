@@ -12,28 +12,42 @@
   };
 
   var Tabs = function(el, options) {
-    this.options = $.extend({}, options)
+    var defaults = {
+      filter: '*'
+    };
+
+    this.options = $.extend({}, defaults, options)
 
     this.$tabs = $(el);
 
     this.toggle = this.toggle.bind(this);
 
-    this.$tabs.on('click', 'a', function(e){
+    this.$tabs.on('click', this.options.filter + ' a', function(e){
       e.preventDefault();
-      this.toggle(e.target);
+      e.stopPropagation();
+
+      this.toggle(e.currentTarget);
 
       if(this.options.onChange) this.options.onChange(e);
     }.bind(this));
 
-    if(this.$tabs.find('a[data-active="data-active"]').length > 0){
-      this.$tabs.find('a').each(function(){
+    if(this.items().find('a').length < 1){
+      return;
+    }
+
+    if(this.items().find('a[data-active="data-active"]').length > 0){
+      this.items().find('a').each(function(){
         targetForLink(this).hide();
       });
 
-      this.activate(this.$tabs.find('a[data-active="data-active"]'));
+      this.activate(this.items().find('a[data-active="data-active"]'));
     } else {
-      this.toggle(this.$tabs.find('a').first());
+      this.toggle(this.items().find('a').first());
     }
+  }
+
+  Tabs.prototype.items = function(){
+    return this.$tabs.find(this.options.filter);
   }
 
   Tabs.prototype.activate = function($target){
@@ -46,7 +60,7 @@
 
     if(this.$active) this.$active.attr('data-active', null);
 
-    this.$tabs.find('a').each(function(){
+    this.items().find('a').each(function(){
       targetForLink(this).hide();
     })
 
@@ -73,10 +87,14 @@
     this.toggle = this.toggle.bind(this);
 
     this.$el.on('click', options.toggle, function(e){
+      if($(e.target).is(this.options.ignore)) {
+        return;
+      }
+
       e.preventDefault();
       e.stopPropagation();
 
-      this.toggle($(e.target));
+      this.toggle($(e.currentTarget));
 
       if(this.options.onChange) {
         this.options.onChange(e);
@@ -136,16 +154,15 @@
     return arr[0]
   }
 
-  // var stateFromEl()
-
   var Modules = function(el) {
     var element  = $(el);
     var api      = element.data('api');
     var sortable = element.data('sortable');
 
     element.find('.tabs').tabs({
+      filter: '.tab',
       onChange: function(e){
-        var $el = $(e.target);
+        var $el = $(e.currentTarget);
         var parts = $el.attr('href').split('-');
         var id = last(parts);
         var tab = first(parts.splice(-2, 1));
@@ -156,9 +173,10 @@
     });
 
     element.accordion({
+      ignore: '.modules-entry-delete, .modules-entry-delete i',
       toggle: '> .modules-entries > .modules-entry > .accordion-toggle',
       onChange: function(e){
-        var $el = $(e.target);
+        var $el = $(e.currentTarget);
         var parts = $el.closest('.modules-entry').attr('id').split('-');
         var id = last(parts);
         var collapsed = $el.is('.accordion--closed');

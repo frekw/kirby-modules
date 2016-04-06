@@ -6,24 +6,28 @@ foreach($field->entries() as $i => $entry):
 ?>
 
 <div class="modules-entry" id="modules-entry-<?php echo $entry->id() ?>">
-  <h4 class="modules-type accordion-toggle<?php e($state['collapsed'] === 'true', ' accordion--closed') ?>"><?php echo ucfirst($entry->type()); ?> Module</h4>
-    <div class="accordion-content">
-
-    <?php if($form('has-options', $entry, $field)): ?>
+  <div class="modules-header accordion-toggle<?php e($state['collapsed'] === 'true', ' accordion--closed') ?>">
+    <h4 class="modules-type"><?php echo ucfirst($entry->type()); ?> Module</h4>
     <ul class="tabs">
-      <li><a href="#modules-entry-fields-<?php echo $entry->id() ?>" <?php e($state['active_tab'] !== 'options', 'data-active="data-active"') ?>">Content</a></li>
-      <li><a href="#modules-entry-options-<?php echo $entry->id() ?>" <?php e($state['active_tab'] === 'options', 'data-active="data-active"') ?>">Settings</a></li>
+      <?php if($form('has-options', $entry, $field)): ?>
+      <li class="tab"><a href="#modules-entry-fields-<?php echo $entry->id() ?>" <?php e($state['active_tab'] !== 'options', 'data-active="data-active"') ?>"><?php i('pencil') ?></a></li>
+      <li class="tab"><a href="#modules-entry-options-<?php echo $entry->id() ?>" <?php e($state['active_tab'] === 'options', 'data-active="data-active"') ?>"><?php i('cog') ?></a></li>
+      <?php endif; ?>
+      <li><a href="#" class="toggle-on"><?php i('toggle-on') ?></a></li>
+      <li><a href="#" class="toggle-off"><?php i('toggle-off') ?></a></li>
+      <?php if(!$field->readonly()): ?>
+        <li>
+          <a data-modal
+             class="modules-entry-delete"
+             href="<?php __($field->url('delete') . '/' . $entry->id()) ?>">
+            <?php i('trash') ?>
+          </a>
+        </li>
+      <?php endif; ?>
     </ul>
-    <?php endif; ?>
+  </div>
 
-    <?php if(!$field->readonly()): ?>
-      <a data-modal
-         class="btn btn-icon btn-rounded btn-negative modules-entry-delete"
-         href="<?php __($field->url('delete') . '/' . $entry->id()) ?>">
-      <?php i('trash-o', 'left') . _l('fields.structure.delete') ?>
-    </a>
-    <?php endif; ?>
-
+  <div class="accordion-content">
     <div class="modules-entry-content">
       <?php if(!$field->readonly()): ?>
         <div class="modules-entry-fields" id="modules-entry-fields-<?php echo $entry->id() ?>">
