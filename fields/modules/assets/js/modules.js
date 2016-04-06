@@ -173,7 +173,7 @@
     });
 
     element.accordion({
-      ignore: '.modules-entry-delete, .modules-entry-delete i',
+      ignore: '.modules-entry-delete, .modules-entry-delete i, .is-dragging',
       toggle: '> .modules-entries > .modules-entry > .accordion-toggle',
       onChange: function(e){
         var $el = $(e.currentTarget);
@@ -197,6 +197,18 @@
 
     element.sortable({
       items: '.modules-entry',
+      handle: '.modules-header',
+      start: function(e){
+        $(this).find('.modules-header').addClass('is-dragging');
+      },
+      stop: function(){
+        var self = this;
+
+        // keep the class until the click event has fired.
+        setTimeout(function(){
+          $(self).find('.modules-header').removeClass('is-dragging');
+        }, 0)
+      },
       axis: 'y',
       delay: 150,
       scroll: true,
