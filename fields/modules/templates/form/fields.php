@@ -24,7 +24,7 @@ class FormFields extends Brick {
 
     // The options tab has no ID set
     if(isset($this->values()['id'])){
-        $path[] = $this->values()['id'];
+      $path[] = $this->values()['id'];
     }
 
     $path[] = $name;

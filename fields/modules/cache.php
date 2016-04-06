@@ -185,6 +185,7 @@ class ModulesPageCache extends Obj {
       $result = array();
       foreach($data as $k => $v) {
         unset($v['id']);
+        unset($v['_editor_state']);
         $result[]= $this->serialize($v);
       }
 

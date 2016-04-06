@@ -22,13 +22,32 @@ class FormBuilder {
         }
 
         $path = f::resolve(implode(DS, array(kirby()->roots()->blueprints(), 'modules', $this->type)),
-                           array('yml', 'php', 'yaml'));
+            array('yml', 'php', 'yaml'));
 
         return self::$cache[$this->type] = data::read($path, 'yaml');
     }
 
     public function hasOptions() {
-      return isset($this->blueprint()['options']);
+        return isset($this->blueprint()['options']);
+    }
+
+    public function editorState(){
+        $fields = array(
+            'active_tab' => array(
+                'name' => 'active_tab',
+                'type' => 'hidden'
+            ),
+
+            'collapsed' => array(
+                'name' => 'collapsed',
+                'type' => 'hidden'
+            )
+        );
+
+        $values = $this->values();
+        $values = isset($values['_editor_state']) ? $values['_editor_state'] : array();
+
+        return new FormFields($this->parent, $fields, $values, $this->prefix('_editor_state'));
     }
 
     public function render($type = 'fields') {
