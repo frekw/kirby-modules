@@ -37,13 +37,13 @@ class FormFields extends Brick {
       $name = str_replace('-','_', str::lower($name));
       $prefixedName = isset($this->prefix) ? $this->prefix . '[' . $name . ']' : $name;
 
+
       $field['name']    = $prefixedName;
-      $field['default'] = a::get($field, 'default', null);
-      $field['value']   = a::get($this->values(), $name, $field['default']);
       $field['page'] = $this->page;
       $field['model'] = $this->page;
-
       $field['path'] = $this->path($name);
+      $field['default'] = a::get($field, 'default', null);
+      $field['value'] = yaml::encode(a::get($this->values(), $name, $field['default']));
 
       $this->fields->append($prefixedName, static::field($field['type'], $field));
     }
