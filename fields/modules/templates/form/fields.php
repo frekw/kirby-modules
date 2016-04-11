@@ -43,7 +43,11 @@ class FormFields extends Brick {
       $field['model'] = $this->page;
       $field['path'] = $this->path($name);
       $field['default'] = a::get($field, 'default', null);
-      $field['value'] = yaml::encode(a::get($this->values(), $name, $field['default']));
+
+      $value = a::get($this->values(), $name, $field['default']);
+      $value = is_array($value) ? yaml::encode($value) : $value;
+
+      $field['value'] = $value;
 
       $this->fields->append($prefixedName, static::field($field['type'], $field));
     }
