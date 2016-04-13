@@ -1,30 +1,47 @@
 <?php
 
+class ModuleContent {
+  public $page = null;
+  public $data = array();
+
+  public function __construct($page, $data) {
+    $this->page = $page;
+      
+    foreach($data as $k => $v){
+      $this->data[$k] = $v instanceof ModuleContent ? $v : new Field($page, $k, $v);
+    }
+  }
+
+  public function get($key, $arguments = null) {
+    // case-insensitive data fetching    
+    $key = strtolower($key);
+
+    if(isset($this->data[$key])) {
+      return $this->data[$key];
+    } else {
+      // return an empty field as default
+      return new Field($this->page, $key);
+    }
+  }
+
+  public function __call($method, $arguments = null) {
+    return $this->get($method, $arguments);
+  }
+}
+
 class ModuleRenderer {
   public $type = null;
   public $data = null;
 
   public function __construct($type, $data, $page){
     $this->type = $type;
-    $this->data = new Obj();
 
-    foreach($data as $k => $v){
-      if($k === 'options') {
-        $this->options($page, $v);
-      } else {
-        $this->data->$k = new Field($page, $k, $v);
-      }
+    if(isset($data['options'])){
+      $data['options'] = new ModuleContent($page, $data['options']);
     }
 
+    $this->data = new ModuleContent($page, $data);
     $this->page = $page;
-  }
-
-  public function options($page, $options) {
-    $this->data->options = new stdClass();
-
-    foreach($options as $k => $v) {
-      $this->data->options->$k = new Field($page, $k, $v);
-    }
   }
 
   public function args() {
