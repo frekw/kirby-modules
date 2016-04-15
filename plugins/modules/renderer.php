@@ -34,7 +34,7 @@ class ModuleRenderer {
   public $data = null;
 
   public function __construct($type, $data, $page){
-    $this->type = $type;
+    $this->type = str_replace(' ', '-', $type);
 
     if(isset($data['options'])){
       $data['options'] = new ModuleContent($page, $data['options']);

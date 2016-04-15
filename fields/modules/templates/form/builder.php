@@ -11,7 +11,8 @@ class FormBuilder {
 
     function __construct($entry, $parent) {
         $this->entry = $entry;
-        $this->type = $this->entry->type;
+
+        $this->type = str_replace(' ', '-', $this->entry->type);
 
         $this->parent = $parent;
     }
