@@ -120,6 +120,8 @@ and use them by adding them to your template:
 ## Known issues and limitations
 - Module field validation
 - Change tracking
+- Can't use the structure field in module blueprints
+- Text editor modals (e.g for adding links) won't work
 
 ## Contributing
 Feature requests are unlikely to be implemented but pull requests with new features or bug fixes are welcome!
