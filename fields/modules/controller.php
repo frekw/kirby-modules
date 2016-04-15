@@ -72,7 +72,7 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
   protected function modulesToOptions($modules){
     $moduleTypes = array();
     foreach($modules as $t) {
-      $moduleTypes[strtolower($t)] = $t;
+      $moduleTypes[str_replace(' ', '-', strtolower($t))] = $t;
     }
 
     return array(

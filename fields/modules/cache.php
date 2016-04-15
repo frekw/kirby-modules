@@ -109,7 +109,7 @@ class ModulesPageCache extends Obj {
       return null;
     }
 
-    return $blueprint['fields'][$field]['type'];
+    return str_replace(' ', '-', $blueprint['fields'][$field]['type']);
   }
 
   function isModulesField($field, $blueprint){
