@@ -32,8 +32,9 @@ class ModuleContent {
 class ModuleRenderer {
   public $type = null;
   public $data = null;
+  public $modules = null;
 
-  public function __construct($type, $data, $page){
+  public function __construct($type, $data, $page, $modules){
     $this->type = str_replace(' ', '-', $type);
 
     if(isset($data['options'])){
@@ -42,6 +43,7 @@ class ModuleRenderer {
 
     $this->data = new ModuleContent($page, $data);
     $this->page = $page;
+    $this->modules = $modules;
   }
 
   public function args() {
@@ -54,7 +56,8 @@ class ModuleRenderer {
 
     return array(
       'module' => $this->data,
-      'page' => $this->page
+      'page' => $this->page,
+      'modules' => $this->modules
     );
   }
 
@@ -85,7 +88,7 @@ class ModulesRenderer {
       if(!isset($v['type'])) {
         throw new Exception('Missing field type for module: ' . $v);
       }
-      $this->modules[] = new ModuleRenderer($v['type'], $v, $field->page);
+      $this->modules[] = new ModuleRenderer($v['type'], $v, $field->page, $data);
     }
   }
 
