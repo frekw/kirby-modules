@@ -98,6 +98,8 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
   }
 
   protected function blueprintForType($type) {
+    $type = str_replace(' ', '-', $type);
+
     if($path = $this->blueprintPath($type)){
       return yaml::decode(f::read($path));
     }
