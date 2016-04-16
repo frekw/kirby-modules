@@ -69,8 +69,7 @@
 
   $.fn.tabs = function(options){
     return this.each(function(){
-      if ($.data(this, 'plugin_tabs')) return
-      $.data(this, 'plugin_tabs', new Tabs(this, options));
+      new Tabs(this, options);
     });
   };
 })(jQuery);
@@ -160,36 +159,32 @@
     var api      = element.data('api');
     var sortable = element.data('sortable');
 
-    function selectTab($tab, onlyIfActive) {
-      var parts = $tab.attr('href').split('-');
-      var moduleId = last(parts);
-      var tab = first(parts.splice(-2, 1));
-      var $activeTabInput = $('input[name$="[' + moduleId + '][_editor_state][active_tab]"]');
-      var activate = $activeTabInput.val() !== tab;
-      if (onlyIfActive && activate) {
-        return $tab.removeAttr('data-active');
-      } else if (onlyIfActive) {
-        activate = !activate;
-      }
-      $activeTabInput.val(activate ? tab : '');
-      $tab.attr('data-active', activate ? '' : null);
-      $tab.closest('.modules-entry').find('.accordion-content').toggle(activate);
-      if (!onlyIfActive) {
-        $tab.closest('form').trigger('keep');
-      }
-    }
-
     element.find('.tabs').tabs({
       filter: '.tab',
       onChange: function(e){
-        selectTab($(e.currentTarget));
+        var $el = $(e.currentTarget);
+        var parts = $el.attr('href').split('-');
+        var id = last(parts);
+        var tab = first(parts.splice(-2, 1));
+
+        $('input[name$="[' + id + '][_editor_state][active_tab]"]').val(tab);
+        $el.closest('form').trigger('keep');
       }
     });
 
-    element.find('.modules-entry .accordion-content').hide();
-    element.find('.tabs .tab a').each(function() {
-      selectTab($(this), true);
-    })
+    element.accordion({
+      ignore: '.modules-entry-delete, .modules-entry-delete i, .is-dragging',
+      toggle: '> .modules-entries > .modules-entry > .accordion-toggle',
+      onChange: function(e){
+        var $el = $(e.currentTarget);
+        var parts = $el.closest('.modules-entry').attr('id').split('-');
+        var id = last(parts);
+        var collapsed = $el.is('.accordion--closed');
+
+        $('input[name$="[' + id + '][_editor_state][collapsed]"]').val(collapsed);
+        $el.closest('form').trigger('keep');
+      }
+    });
 
     if(sortable === false) return false;
 
