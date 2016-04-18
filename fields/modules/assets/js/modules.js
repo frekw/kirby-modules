@@ -166,30 +166,48 @@
       var tab = first(parts.splice(-2, 1));
       var $activeTabInput = $('input[name$="[' + moduleId + '][_editor_state][active_tab]"]');
       var activate = $activeTabInput.val() !== tab;
-      if (onlyIfActive && activate) {
-        return $tab.removeAttr('data-active');
-      } else if (onlyIfActive) {
-        activate = !activate;
+      if (onlyIfActive) {
+        if ($activeTabInput.val() === '' && tab === 'fields') {
+          activate = true;
+        } else if (activate) {
+          $tab.removeAttr('data-active');
+          return;
+        } else {
+          activate = !activate;
+        }
       }
-      $activeTabInput.val(activate ? tab : '');
+      $activeTabInput.val(activate ? tab : 'none');
+      $tab.closest('.tabs').find('.tab a').removeAttr('data-active');
       $tab.attr('data-active', activate ? '' : null);
-      $tab.closest('.modules-entry').find('.accordion-content').toggle(activate);
+      var $content = $tab.closest('.modules-entry').children('.modules-entry-content')
+      $content.children().hide();
+      $content.toggleClass('open', activate);
+      if (activate) {
+        $($tab.attr('href').replace(/^[^#]+/, '')).show();
+      }
       if (!onlyIfActive) {
         $tab.closest('form').trigger('keep');
       }
     }
 
-    element.find('.tabs').tabs({
-      filter: '.tab',
-      onChange: function(e){
+    element.find('.tabs').each(function() {
+      var $tabs = $(this);
+      if ($tabs.data('module-tabs')) return;
+      $tabs.data('module-tabs', true);
+      $tabs.find('.tab a').each(function() {
+        selectTab($(this), true);
+      })
+      $tabs.on('click', '.tab a', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         selectTab($(e.currentTarget));
-      }
+      });
+      $tabs.closest('.modules-header').click(function(e) {
+        if (e.target.nodeName === 'DIV') {
+          $tabs.find('.tab:first-child a').click()
+        }
+      });
     });
-
-    element.find('.modules-entry .accordion-content').hide();
-    element.find('.tabs .tab a').each(function() {
-      selectTab($(this), true);
-    })
 
     if(sortable === false) return false;
 

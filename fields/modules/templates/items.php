@@ -25,22 +25,20 @@ foreach($field->entries() as $i => $entry):
     </ul>
   </div>
 
-  <div class="accordion-content">
-    <div class="modules-entry-content">
-      <?php if(!$field->readonly()): ?>
-        <div class="modules-entry-fields" id="modules-entry-fields-<?php echo $entry->id() ?>">
-          <?php $form('fields', $entry, $field); ?>
-        </div>
+  <div class="modules-entry-content">
+    <?php if(!$field->readonly()): ?>
+      <div class="modules-entry-fields" id="modules-entry-fields-<?php echo $entry->id() ?>">
+        <?php $form('fields', $entry, $field); ?>
+      </div>
 
-        <?php if($form('has-options', $entry, $field)): ?>
-          <div class="modules-entry-options" id="modules-entry-options-<?php echo $entry->id() ?>">
-            <?php $form('options', $entry, $field); ?>
-          </div>
-        <?php endif; ?>
-      <?php $form('editor-state', $entry, $field); ?>
-      <?php require implode(DS, array(__DIR__, 'form.php')); ?>
-     <?php endif ?>
-  </div>
+      <?php if($form('has-options', $entry, $field)): ?>
+        <div class="modules-entry-options" id="modules-entry-options-<?php echo $entry->id() ?>">
+          <?php $form('options', $entry, $field); ?>
+        </div>
+      <?php endif; ?>
+    <?php $form('editor-state', $entry, $field); ?>
+    <?php require implode(DS, array(__DIR__, 'form.php')); ?>
+    <?php endif ?>
   </div>
 </div>
 <?php endforeach ?>

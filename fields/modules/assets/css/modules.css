@@ -69,20 +69,12 @@
   border-bottom:0;
 }
 
-.modules-header.accordion--open .toggle-on {
-  display:block;
+.accordion-content {
+	display: none;
 }
-.modules-header.accordion--open .toggle-off {
-  display:none;
+.accordion-content.open {
+	display: block;
 }
-
-.modules-header.accordion--closed .toggle-on {
-  display:none;
-}
-.modules-header.accordion--closed .toggle-off {
-  display:block;
-}
-
 
 .modules-empty {
   padding:4em 0;
@@ -107,10 +99,15 @@
 }
 
 .modules-entry-content {
+	display: none;
   padding:1em;
   border:1px solid #ddd;
   border-top:0;
   background:#fff;
+}
+
+.modules-entry-content.open {
+	display: block;
 }
 
 .modules-entry {
