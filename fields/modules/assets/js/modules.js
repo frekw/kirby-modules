@@ -69,8 +69,7 @@
 
   $.fn.tabs = function(options){
     return this.each(function(){
-      if ($.data(this, 'plugin_tabs')) return
-      $.data(this, 'plugin_tabs', new Tabs(this, options));
+      new Tabs(this, options);
     });
   };
 })(jQuery);
