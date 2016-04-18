@@ -69,7 +69,8 @@
 
   $.fn.tabs = function(options){
     return this.each(function(){
-      new Tabs(this, options);
+      if ($.data(this, 'plugin_tabs')) return
+      $.data(this, 'plugin_tabs', new Tabs(this, options));
     });
   };
 })(jQuery);
@@ -166,9 +167,7 @@
       var $activeTabInput = $('input[name$="[' + moduleId + '][_editor_state][active_tab]"]');
       var activate = $activeTabInput.val() !== tab;
       if (onlyIfActive) {
-        if ($activeTabInput.val() === '' && tab === 'fields') {
-          activate = true;
-        } else if (activate) {
+        if (activate) {
           $tab.removeAttr('data-active');
           return;
         } else {

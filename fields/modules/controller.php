@@ -18,9 +18,9 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
     }
 
     $self = $this;
-    $model = $this->model();
     $modalsize = 'medium';
     $types = $this->modulesToOptions($modules);
+
     $form = $this->form('add', array($model, $cache, $types), function($form) use($model, $cache, $self, $path) {
 
       $form->validate();
