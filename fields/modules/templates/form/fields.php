@@ -61,6 +61,15 @@ class FormFields extends Brick {
   }
 
   static public function field($type, $options = array()) {
+    if (!empty($options['extends'])) {
+      $extends = f::resolve(kirby()->roots()->blueprints() . DS . 'fields' . DS . $options['extends'], array('yml', 'php', 'yaml'));
+      if (empty($extends)) {
+        throw new Exception(l('fields.error.extended'));
+      }
+      $options = a::merge(data::read($extends, 'yaml'), $options);
+      if (empty($type)) $type = $options['type'];
+    }
+
     $class = $type . 'field';
     if(!class_exists($class)) {
       throw new Exception('The ' . $type . ' field is missing. Please add it to your installed fields or remove it from your blueprint');
