@@ -105,7 +105,8 @@ class ModulesPageCache extends Obj {
 
     if(!isset($blueprint) ||
        !isset($blueprint['fields']) ||
-       !isset($blueprint['fields'][$field])){
+       !isset($blueprint['fields'][$field]) ||
+       !isset($blueprint['fields'][$field]['type'])){
       return null;
     }
 
