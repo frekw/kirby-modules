@@ -45,7 +45,10 @@ class FormFields extends Brick {
       $field['default'] = a::get($field, 'default', null);
 
       $value = a::get($this->values(), $name, $field['default']);
-      $value = is_array($value) ? yaml::encode($value) : $value;
+      // Ugly hack to ensure list field plugin works
+      if (is_array($value) && $field['type'] == 'list') {
+        $value = yaml::encode($value);
+      }
 
       $field['value'] = $value;
 
