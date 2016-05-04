@@ -15,7 +15,6 @@ field::$methods['modules'] = function($field) {
 
 field::$methods['modulesArray'] = function($field) {
   $renderer = new ModulesRenderer($field);
-  $data = array_map(function($m){ return $m->data; }, $renderer->modules);
 
-  return $data;
+  return $renderer->modules;
 };
