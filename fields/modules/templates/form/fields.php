@@ -52,7 +52,7 @@ class FormFields extends Brick {
 
       $field['value'] = $value;
 
-      $this->fields->append($prefixedName, static::field($field['type'], $field));
+      $this->fields->append($prefixedName, static::field(isset($field['type']) ? $field['type'] : null, $field));
     }
     return $this;
   }
