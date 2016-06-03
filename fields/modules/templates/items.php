@@ -1,25 +1,37 @@
 <?php
 $form = require implode(DS, array(__DIR__, 'form.php'));
 
+$nameFields = ['module_name', 'name', 'title'];
+
 foreach($field->entries() as $i => $entry):
+  $moduleName = ucfirst(str_replace('-', ' ', $entry->type()));
+  foreach ($nameFields as $nameField) {
+    if (!empty($entry->$nameField)) $moduleName .= ' - ' . $entry->$nameField;
+    break;
+  }
 ?>
 
 <div class="modules-entry" id="modules-entry-<?php echo $entry->id() ?>">
   <div class="modules-header">
-    <h4 class="modules-type"><?php echo ucfirst(str_replace('-', ' ', $entry->type())); ?></h4>
+    <h4 class="modules-type"><?= esc($moduleName) ?></h4>
     <ul class="tabs">
       <li class="tab"><a href="#modules-entry-fields-<?php echo $entry->id() ?>"><?php i('pencil') ?></a></li>
       <?php if($form('has-options', $entry, $field)): ?>
         <li class="tab"><a href="#modules-entry-options-<?php echo $entry->id() ?>"><?php i('cog') ?></a></li>
       <?php endif; ?>
+        <li><a data-modal
+          class="modules-entry-rename"
+          title="Rename module"
+          href="<?php __($field->url('rename') . '/' . $entry->id()) ?>">
+          <?php i('i-cursor') ?>
+        </a></li>
       <?php if(!$field->readonly()): ?>
-        <li>
-          <a data-modal
-             class="modules-entry-delete"
-             href="<?php __($field->url('delete') . '/' . $entry->id()) ?>">
-            <?php i('trash') ?>
-          </a>
-        </li>
+        <li><a data-modal
+          class="modules-entry-delete"
+          title="Delete module"
+          href="<?php __($field->url('delete') . '/' . $entry->id()) ?>">
+          <?php i('trash') ?>
+        </a></li>
       <?php endif; ?>
     </ul>
   </div>
@@ -35,8 +47,7 @@ foreach($field->entries() as $i => $entry):
           <?php $form('options', $entry, $field); ?>
         </div>
       <?php endif; ?>
-    <?php $form('editor-state', $entry, $field); ?>
-    <?php require implode(DS, array(__DIR__, 'form.php')); ?>
+    <?php $form('metadata', $entry, $field); ?>
     <?php endif ?>
   </div>
 </div>

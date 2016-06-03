@@ -118,7 +118,7 @@ class ModulesPageCache extends Obj {
   }
 
 
-  function data($content = array()) {
+  function data() {
     if(isset($this->data)) {
       return $this->data;
     }
@@ -132,6 +132,8 @@ class ModulesPageCache extends Obj {
         $data[$field] = $this->toModulesField($type, yaml::decode($content->get($field)));
       }
     }
+
+    $data['module_name'] = yaml::decode($content->get('module_name'));
 
     return $this->data = $data;
   }

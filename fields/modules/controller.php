@@ -58,6 +58,32 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
 
   }
 
+  public function rename($path) {
+    $path = explode('/', $path);
+    $self = $this;
+    $model = $this->model();
+    $cache = $this->cache($model);
+    $entry = $cache->get($path);
+
+    if(!$entry) {
+      return $this->modal('error', array(
+        'text' => 'Unable to find module.'
+      ));
+    }
+
+    $form = $this->form('rename', [$model, $entry], function($form) use($self, $model, $cache, $path) {
+      $form->validate();
+      if (!$form->isValid()) {
+        return false;
+      }
+      $cache->update($path, array_merge($cache->get($path), $form->serialize()));
+      $self->redirect($model);
+    });
+
+
+    return $this->modal('rename', compact('form'));
+  }
+
   function last(&$arr){
     $x = end($arr);
     reset($arr);
