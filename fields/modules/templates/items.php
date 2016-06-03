@@ -1,14 +1,9 @@
 <?php
 $form = require implode(DS, array(__DIR__, 'form.php'));
 
-$nameFields = ['module_name', 'name', 'title'];
-
 foreach($field->entries() as $i => $entry):
   $moduleName = ucfirst(str_replace('-', ' ', $entry->type()));
-  foreach ($nameFields as $nameField) {
-    if (!empty($entry->$nameField)) $moduleName .= ' - ' . $entry->$nameField;
-    break;
-  }
+  if (!empty($entry->module_name)) $moduleName .= ' - ' . $entry->module_name;
 ?>
 
 <div class="modules-entry" id="modules-entry-<?php echo $entry->id() ?>">
