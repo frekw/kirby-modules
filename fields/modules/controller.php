@@ -19,7 +19,11 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
 
     $self = $this;
     $modalsize = 'medium';
-    $types = $this->modulesToOptions($modules);
+
+    $types = array();
+    foreach($modules as $t) {
+      $types[str_replace(' ', '-', strtolower($t))] = $t;
+    }
 
     $form = $this->form('add', array($model, $cache, $types), function($form) use($model, $cache, $self, $path) {
 
@@ -67,22 +71,6 @@ class ModulesFieldController extends Kirby\Panel\Controllers\Field {
   function first(&$arr){
     reset($arr);
     return $arr[0];
-  }
-
-  protected function modulesToOptions($modules){
-    $moduleTypes = array();
-    foreach($modules as $t) {
-      $moduleTypes[str_replace(' ', '-', strtolower($t))] = $t;
-    }
-
-    return array(
-      'type' => array(
-        'required' => true,
-        'name' => 'Module Type',
-        'type' => 'select',
-        'options' => $moduleTypes
-      )
-    );
   }
 
   protected function modulesForRootField($model) {
