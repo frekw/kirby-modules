@@ -28,7 +28,12 @@ class ModulesField extends BaseField {
         'pattern' => 'delete/(:all)',
         'method'  => 'get|post',
         'action'  => 'delete',
-      )
+      ),
+      array(
+        'pattern' => 'rename/(:all)',
+        'method'  => 'get|post',
+        'action'  => 'rename',
+      ),
     );
   }
 
@@ -91,11 +96,8 @@ class ModulesField extends BaseField {
   public function url($action) {
     $path = join('/', $this->path());
     $root = $this->path()[0];
-    return purl($this->model(),
-                join('/', array('field',
-                                $root,
-                                'modules',
-                                $action,
-                                $path)));
+    return purl($this->model(), join('/', [
+      'field', $root, 'modules', $action, $path
+    ]));
   }
 }

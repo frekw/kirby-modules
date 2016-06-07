@@ -32,23 +32,33 @@ class FormBuilder {
         return isset($this->blueprint()['options']);
     }
 
-    public function editorState(){
-        $fields = array(
-            'active_tab' => array(
-                'name' => 'active_tab',
-                'type' => 'hidden'
-            ),
+    public function metadata() {
+      $fields = array(
+        'module_name' => array(
+          'name' => 'module_name',
+          'type' => 'hidden'
+        ),
+      );
 
-            'collapsed' => array(
-                'name' => 'collapsed',
-                'type' => 'hidden'
-            )
-        );
+      return new FormFields($this->parent, $fields, $this->values(), $this->prefix());
+    }
 
-        $values = $this->values();
-        $values = isset($values['_editor_state']) ? $values['_editor_state'] : array();
+    public function editorState() {
+      $fields = array(
+        'active_tab' => array(
+          'name' => 'active_tab',
+          'type' => 'hidden'
+        ),
+        'collapsed' => array(
+          'name' => 'collapsed',
+          'type' => 'hidden'
+        )
+      );
 
-        return new FormFields($this->parent, $fields, $values, $this->prefix('_editor_state'));
+      $values = $this->values();
+      $values = isset($values['_editor_state']) ? $values['_editor_state'] : array();
+
+      return new FormFields($this->parent, $fields, $values, $this->prefix('_editor_state'));
     }
 
     public function render($type = 'fields') {
