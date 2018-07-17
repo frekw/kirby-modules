@@ -181,8 +181,8 @@ class ModulesPageCache extends Obj {
 
 
   function serialize($data){
-    if(count($data) < 1) return $data;
     if(!is_array($data)) return $data;
+    if(count($data) < 1) return $data;
 
     if(isset(reset($data)['id'])){
       $result = array();
