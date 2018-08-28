@@ -82,7 +82,7 @@ class FormBuilder {
 
     public function fields() {
         $blueprint = $this->blueprint();
-        $fields = $blueprint['fields'];
+        $fields = isset($blueprint['fields']) ? $blueprint['fields'] : array();
 
         $fields['type'] = array(
             'type' => 'hidden',
